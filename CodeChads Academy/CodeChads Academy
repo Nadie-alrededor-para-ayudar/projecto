@@ -1,0 +1,135 @@
+import java.util.Scanner;
+
+public class CodeChadsAcademy {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // ================== Configuración inicial ==================
+        int cantidadAlumnos = 4;  // cantidad de alumnos
+        int[][] notasClase = new int[cantidadAlumnos][5]; // 4 alumnos x 5 notas
+
+        // ================== Ingreso y cálculo de notas por alumno ==================
+        for (int alumno = 0; alumno < cantidadAlumnos; alumno++) {
+            System.out.println("\n=== Alumno " + (alumno + 1) + " ===");
+
+            // Ingreso de las 3 primeras notas
+            System.out.print("Ingrese nota 1: ");
+            int nota1 = sc.nextInt();
+            System.out.print("Ingrese nota 2: ");
+            int nota2 = sc.nextInt();
+            System.out.print("Ingrese nota 3: ");
+            int nota3 = sc.nextInt();
+
+            // ================== Parte 1: Cálculo de notas 4 y 5 ==================
+            int nota4 = (nota2 < 60) ? 100 : nota2;
+            int nota5 = (nota1 + nota3 > 150) ? 95 : 70;
+
+            // Guardamos en matriz
+            notasClase[alumno][0] = nota1;
+            notasClase[alumno][1] = nota2;
+            notasClase[alumno][2] = nota3;
+            notasClase[alumno][3] = nota4;
+            notasClase[alumno][4] = nota5;
+
+            // ================== Parte 2: Verificar si aprobó todas ==================
+            int aprobadas = 0;
+            for (int n : notasClase[alumno]) {
+                if (n >= 60) aprobadas++;
+            }
+
+            if (aprobadas == 5) {
+                System.out.println("Resultado: Aprobaste todas. ¡Backend Sensei!");
+            } else if (aprobadas == 0) {
+                System.out.println("Resultado: No aprobaste ninguna. ¡Sos un clon de frontend!");
+            } else {
+                System.out.println("Resultado: Algunas aprobadas. Sos un refactor en progreso.");
+            }
+
+            // ================== Parte 3: Bonus por progreso ==================
+            boolean progresivo = true;
+            for (int i = 1; i < 5; i++) {
+                if (notasClase[alumno][i] <= notasClase[alumno][i - 1]) {
+                    progresivo = false;
+                    break;
+                }
+            }
+            if (progresivo) {
+                System.out.println("¡Nivel PROGRESIVO! Sos un Stone Chad en crecimiento 📈");
+            }
+
+            // ================== Parte 4: Notas ordenadas (sin Arrays.sort) ==================
+            System.out.print("Notas ordenadas de mayor a menor: ");
+            int[] copia = notasClase[alumno].clone();
+            for (int i = 0; i < copia.length - 1; i++) {
+                for (int j = i + 1; j < copia.length; j++) {
+                    if (copia[j] > copia[i]) {
+                        int aux = copia[i];
+                        copia[i] = copia[j];
+                        copia[j] = aux;
+                    }
+                }
+            }
+            for (int n : copia) System.out.print(n + " ");
+            System.out.println();
+
+            // ================== Parte 5: Evaluación final por nivel ==================
+            int total = 0;
+            for (int n : notasClase[alumno]) total += n;
+
+            if (total < 250) {
+                System.out.println("Evaluación final: Normie total 😢");
+            } else if (total < 350) {
+                System.out.println("Evaluación final: Soft Chad");
+            } else if (total < 450) {
+                System.out.println("Evaluación final: Chad");
+            } else {
+                System.out.println("Evaluación final: Stone Chad definitivo 💪");
+            }
+        }
+
+        // ================== Parte 6: Ranking entre todos ==================
+        System.out.println("\n=== Ranking General ===");
+
+        // a) Promedio más alto
+        int mejorAlumno = -1;
+        double mejorPromedio = -1;
+        for (int alumno = 0; alumno < cantidadAlumnos; alumno++) {
+            int suma = 0;
+            for (int n : notasClase[alumno]) suma += n;
+            double promedio = suma / 5.0;
+            if (promedio > mejorPromedio) {
+                mejorPromedio = promedio;
+                mejorAlumno = alumno;
+            }
+        }
+        System.out.println("Mejor promedio: Alumno " + (mejorAlumno + 1) + " con " + mejorPromedio);
+
+        // b) Más regular (menor diferencia entre notas)
+        int masRegular = -1;
+        int menorDesviacion = Integer.MAX_VALUE;
+        for (int alumno = 0; alumno < cantidadAlumnos; alumno++) {
+            int max = notasClase[alumno][0], min = notasClase[alumno][0];
+            for (int n : notasClase[alumno]) {
+                if (n > max) max = n;
+                if (n < min) min = n;
+            }
+            int dif = max - min;
+            if (dif < menorDesviacion) {
+                menorDesviacion = dif;
+                masRegular = alumno;
+            }
+        }
+        System.out.println("Más regular: Alumno " + (masRegular + 1));
+
+        // c) Peor rendimiento en la tercera prueba
+        int peorAlumno = -1;
+        int peorNota = 101;
+        for (int alumno = 0; alumno < cantidadAlumnos; alumno++) {
+            if (notasClase[alumno][2] < peorNota) {
+                peorNota = notasClase[alumno][2];
+                peorAlumno = alumno;
+            }
+        }
+        System.out.println("Peor nota en la 3ra prueba: Alumno " + (peorAlumno + 1) + " con " + peorNota);
+    }
+}
