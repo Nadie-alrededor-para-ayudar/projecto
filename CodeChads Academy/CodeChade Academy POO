@@ -1,0 +1,156 @@
+import java.util.*;
+
+class Alumno {
+    private int id;
+    private int[] notas = new int[5];
+
+    public Alumno(int id) {
+        this.id = id;
+    }
+
+    public void cargarNotas(Scanner sc) {
+        System.out.println("\n=== Alumno " + id + " ===");
+        System.out.print("Ingrese nota 1: ");
+        int nota1 = sc.nextInt();
+        System.out.print("Ingrese nota 2: ");
+        int nota2 = sc.nextInt();
+        System.out.print("Ingrese nota 3: ");
+        int nota3 = sc.nextInt();
+
+        notas[0] = nota1;
+        notas[1] = nota2;
+        notas[2] = nota3;
+        notas[3] = (nota2 < 60) ? 100 : nota2;
+        notas[4] = (nota1 + nota3 > 150) ? 95 : 70;
+    }
+
+    public void mostrarResultado() {
+        int aprobadas = 0;
+        for (int n : notas) if (n >= 60) aprobadas++;
+
+        if (aprobadas == 5)
+            System.out.println("Resultado: Aprobaste todas. ¡Backend Sensei!");
+        else if (aprobadas == 0)
+            System.out.println("Resultado: No aprobaste ninguna. ¡Sos un clon de frontend!");
+        else
+            System.out.println("Resultado: Algunas aprobadas. Sos un refactor en progreso.");
+
+        if (esProgresivo())
+            System.out.println("¡Nivel PROGRESIVO! Sos un Stone Chad en crecimiento 📈");
+
+        mostrarNotasOrdenadas();
+        mostrarEvaluacionFinal();
+    }
+
+    private boolean esProgresivo() {
+        for (int i = 1; i < notas.length; i++) {
+            if (notas[i] <= notas[i - 1]) return false;
+        }
+        return true;
+    }
+
+    private void mostrarNotasOrdenadas() {
+        int[] copia = notas.clone();
+        for (int i = 0; i < copia.length - 1; i++) {
+            for (int j = i + 1; j < copia.length; j++) {
+                if (copia[j] > copia[i]) {
+                    int aux = copia[i];
+                    copia[i] = copia[j];
+                    copia[j] = aux;
+                }
+            }
+        }
+        System.out.print("Notas ordenadas de mayor a menor: ");
+        for (int n : copia) System.out.print(n + " ");
+        System.out.println();
+    }
+
+    private void mostrarEvaluacionFinal() {
+        int total = 0;
+        for (int n : notas) total += n;
+        if (total < 250)
+            System.out.println("Evaluación final: Normie total 😢");
+        else if (total < 350)
+            System.out.println("Evaluación final: Soft Chad");
+        else if (total < 450)
+            System.out.println("Evaluación final: Chad");
+        else
+            System.out.println("Evaluación final: Stone Chad definitivo 💪");
+    }
+
+    public double getPromedio() {
+        int suma = 0;
+        for (int n : notas) suma += n;
+        return suma / 5.0;
+    }
+
+    public int diferenciaNotas() {
+        int max = notas[0], min = notas[0];
+        for (int n : notas) {
+            if (n > max) max = n;
+            if (n < min) min = n;
+        }
+        return max - min;
+    }
+
+    public int getNota(int indice) {
+        return notas[indice];
+    }
+
+    public int getId() {
+        return id;
+    }
+}
+
+class Academia {
+    private List<Alumno> alumnos = new ArrayList<>();
+
+    public void iniciar(Scanner sc) {
+        int cantidadAlumnos = 4;
+
+        for (int i = 1; i <= cantidadAlumnos; i++) {
+            Alumno a = new Alumno(i);
+            a.cargarNotas(sc);
+            a.mostrarResultado();
+            alumnos.add(a);
+        }
+
+        mostrarRanking();
+    }
+
+    private void mostrarRanking() {
+        System.out.println("\n=== Ranking General ===");
+
+        // a) Mejor promedio
+        Alumno mejor = alumnos.get(0);
+        for (Alumno a : alumnos)
+            if (a.getPromedio() > mejor.getPromedio()) mejor = a;
+
+        System.out.println("Mejor promedio: Alumno " + mejor.getId() +
+                " con " + mejor.getPromedio());
+
+        // b) Más regular
+        Alumno masRegular = alumnos.get(0);
+        for (Alumno a : alumnos)
+            if (a.diferenciaNotas() < masRegular.diferenciaNotas()) masRegular = a;
+
+        System.out.println("Más regular: Alumno " + masRegular.getId());
+
+        // c) Peor nota en la 3ra prueba
+        Alumno peor = alumnos.get(0);
+        for (Alumno a : alumnos)
+            if (a.getNota(2) < peor.getNota(2)) peor = a;
+
+        System.out.println("Peor nota en la 3ra prueba: Alumno " +
+                peor.getId() + " con " + peor.getNota(2));
+    }
+}
+
+public class CodeChadsAcademyPOO {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Academia academia = new Academia();
+        academia.iniciar(sc);
+        sc.close();
+    }
+}
